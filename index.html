@@ -1,1 +1,590 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+<title>WATTWISE</title>
+
+<style>
+
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+    font-family:Arial, sans-serif;
+}
+
+body{
+    background:#f4f7fb;
+    color:#172033;
+}
+
+header{
+    background:#102a43;
+    color:white;
+    padding:20px;
+    text-align:center;
+}
+
+header h1{
+    font-size:28px;
+}
+
+header p{
+    margin-top:6px;
+    font-size:14px;
+    opacity:.8;
+}
+
+.container{
+    max-width:900px;
+    margin:auto;
+    padding:20px;
+}
+
+.card{
+    background:white;
+    border-radius:18px;
+    padding:20px;
+    margin-bottom:18px;
+    box-shadow:0 5px 20px rgba(0,0,0,.07);
+}
+
+h2{
+    margin-bottom:8px;
+}
+
+.subtitle{
+    color:#687386;
+    margin-bottom:20px;
+}
+
+button{
+    border:none;
+    padding:13px 20px;
+    border-radius:10px;
+    background:#1677ff;
+    color:white;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+button:hover{
+    background:#075ed8;
+}
+
+input{
+    padding:10px;
+    border:1px solid #ccd3df;
+    border-radius:8px;
+    width:80px;
+}
+
+.appliance{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:14px 0;
+    border-bottom:1px solid #edf0f5;
+}
+
+.appliance:last-child{
+    border-bottom:none;
+}
+
+.dashboard{
+    display:none;
+}
+
+.stats{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:15px;
+    margin-bottom:18px;
+}
+
+.stat{
+    background:white;
+    padding:18px;
+    border-radius:15px;
+    box-shadow:0 5px 15px rgba(0,0,0,.05);
+}
+
+.stat p{
+    color:#687386;
+    font-size:13px;
+}
+
+.stat h3{
+    margin-top:8px;
+    font-size:22px;
+}
+
+.appliance-card{
+    padding:15px 0;
+    border-bottom:1px solid #edf0f5;
+}
+
+.appliance-top{
+    display:flex;
+    justify-content:space-between;
+    margin-bottom:8px;
+}
+
+.bar{
+    height:10px;
+    background:#e7ebf1;
+    border-radius:10px;
+    overflow:hidden;
+}
+
+.fill{
+    height:100%;
+    background:#1677ff;
+    border-radius:10px;
+}
+
+.cost{
+    color:#1677ff;
+    font-weight:bold;
+}
+
+.info{
+    background:#eef6ff;
+    padding:15px;
+    border-radius:12px;
+    margin-top:15px;
+    line-height:1.6;
+}
+
+@media(max-width:650px){
+
+    .stats{
+        grid-template-columns:1fr;
+    }
+
+    header h1{
+        font-size:24px;
+    }
+
+}
+
+</style>
+</head>
+
+<body>
+
+<header>
+
+<h1>⚡ WATTWISE</h1>
+
+<p>Smart Energy Monitoring & Appliance Cost Estimation</p>
+
+</header>
+
+
+<div class="container">
+
+
+<!-- HOME SETUP -->
+
+<section id="setup">
+
+<div class="card">
+
+<h2>🏠 Set Up Your Home</h2>
+
+<p class="subtitle">
+Select the appliances available in your home.
+</p>
+
+
+<div class="appliance">
+
+<span>❄️ Air Conditioner</span>
+
+<input type="number" id="ac" value="1" min="0">
+
+</div>
+
+
+<div class="appliance">
+
+<span>🌀 Fan</span>
+
+<input type="number" id="fan" value="2" min="0">
+
+</div>
+
+
+<div class="appliance">
+
+<span>📺 Television</span>
+
+<input type="number" id="tv" value="1" min="0">
+
+</div>
+
+
+<div class="appliance">
+
+<span>🧊 Refrigerator</span>
+
+<input type="number" id="fridge" value="1" min="0">
+
+</div>
+
+
+<div class="appliance">
+
+<span>🧺 Washing Machine</span>
+
+<input type="number" id="washing" value="1" min="0">
+
+</div>
+
+
+<div class="appliance">
+
+<span>💡 Lights</span>
+
+<input type="number" id="lights" value="4" min="0">
+
+</div>
+
+
+<br>
+
+<label>
+
+Electricity tariff ₹/kWh:
+
+<input type="number" id="tariff" value="8">
+
+</label>
+
+<br><br>
+
+<button onclick="showDashboard()">
+Generate Energy Dashboard →
+</button>
+
+</div>
+
+</section>
+
+
+
+<!-- DASHBOARD -->
+
+<section id="dashboard" class="dashboard">
+
+<div class="card">
+
+<h2>📊 Energy Dashboard</h2>
+
+<p class="subtitle">
+AI-based appliance-level energy estimation
+</p>
+
+</div>
+
+
+<div class="stats">
+
+<div class="stat">
+
+<p>Total Energy</p>
+
+<h3 id="totalEnergy">0 kWh</h3>
+
+</div>
+
+
+<div class="stat">
+
+<p>Estimated Cost</p>
+
+<h3 id="totalCost">₹0</h3>
+
+</div>
+
+
+<div class="stat">
+
+<p>Highest Consumer</p>
+
+<h3 id="highest">--</h3>
+
+</div>
+
+</div>
+
+
+
+<div class="card">
+
+<h2>⚡ Appliance-wise Consumption</h2>
+
+<br>
+
+<div id="applianceResults"></div>
+
+</div>
+
+
+
+<div class="card">
+
+<h2>🧠 How WATTWISE Works</h2>
+
+<div class="info">
+
+<b>1. Single Point Measurement</b><br>
+
+The system measures the total electricity consumption of the household from a single point.
+
+<br><br>
+
+<b>2. Signal Processing</b><br>
+
+The collected aggregate power signal is cleaned and prepared for analysis.
+
+<br><br>
+
+<b>3. Deep Learning</b><br>
+
+CNN/LSTM models can learn appliance-specific patterns from the aggregate signal.
+
+<br><br>
+
+<b>4. Appliance Disaggregation</b><br>
+
+The system estimates how much energy individual appliances are consuming.
+
+<br><br>
+
+<b>5. Cost Estimation</b><br>
+
+Energy consumption in kWh is multiplied by the configured electricity tariff.
+
+</div>
+
+</div>
+
+
+<button onclick="goBack()">
+← Edit Home Setup
+</button>
+
+</section>
+
+</div>
+
+
+
+<script>
+
+function showDashboard(){
+
+    const appliances = [
+
+        {
+            name:"Air Conditioner",
+            icon:"❄️",
+            count:Number(document.getElementById("ac").value),
+            power:1.8
+        },
+
+        {
+            name:"Fan",
+            icon:"🌀",
+            count:Number(document.getElementById("fan").value),
+            power:0.12
+        },
+
+        {
+            name:"Television",
+            icon:"📺",
+            count:Number(document.getElementById("tv").value),
+            power:0.10
+        },
+
+        {
+            name:"Refrigerator",
+            icon:"🧊",
+            count:Number(document.getElementById("fridge").value),
+            power:0.18
+        },
+
+        {
+            name:"Washing Machine",
+            icon:"🧺",
+            count:Number(document.getElementById("washing").value),
+            power:0.70
+        },
+
+        {
+            name:"Lights",
+            icon:"💡",
+            count:Number(document.getElementById("lights").value),
+            power:0.08
+        }
+
+    ];
+
+
+    const tariff =
+        Number(document.getElementById("tariff").value) || 0;
+
+
+    let totalEnergy = 0;
+
+    let highestName = "--";
+
+    let highestEnergy = 0;
+
+    let results = "";
+
+
+    appliances.forEach(function(appliance){
+
+        if(appliance.count <= 0){
+            return;
+        }
+
+
+        /*
+        Example assumption:
+
+        power × 1 hour = energy in kWh
+
+        These are prototype/demo values.
+        */
+
+        const energy =
+            appliance.power *
+            appliance.count;
+
+
+        const cost =
+            energy *
+            tariff;
+
+
+        totalEnergy += energy;
+
+
+        if(energy > highestEnergy){
+
+            highestEnergy = energy;
+
+            highestName =
+                appliance.name;
+
+        }
+
+
+        results += `
+
+        <div class="appliance-card">
+
+            <div class="appliance-top">
+
+                <strong>
+                    ${appliance.icon}
+                    ${appliance.name}
+                    × ${appliance.count}
+                </strong>
+
+                <span>
+                    ${energy.toFixed(2)} kWh
+                </span>
+
+            </div>
+
+
+            <div class="bar">
+
+                <div
+                    class="fill"
+                    style="width:${Math.min(
+                        energy / 2 * 100,
+                        100
+                    )}%"
+                ></div>
+
+            </div>
+
+
+            <br>
+
+            <span class="cost">
+                Estimated cost: ₹${cost.toFixed(2)}
+            </span>
+
+        </div>
+
+        `;
+
+    });
+
+
+    document.getElementById(
+        "totalEnergy"
+    ).innerText =
+        totalEnergy.toFixed(2) + " kWh";
+
+
+    document.getElementById(
+        "totalCost"
+    ).innerText =
+        "₹" + (totalEnergy * tariff).toFixed(2);
+
+
+    document.getElementById(
+        "highest"
+    ).innerText =
+        highestName;
+
+
+    document.getElementById(
+        "applianceResults"
+    ).innerHTML =
+        results;
+
+
+    document.getElementById(
+        "setup"
+    ).style.display =
+        "none";
+
+
+    document.getElementById(
+        "dashboard"
+    ).style.display =
+        "block";
+
+}
+
+
+function goBack(){
+
+    document.getElementById(
+        "dashboard"
+    ).style.display =
+        "none";
+
+
+    document.getElementById(
+        "setup"
+    ).style.display =
+        "block";
+
+}
+
+</script>
+
+</body>
+</html>
